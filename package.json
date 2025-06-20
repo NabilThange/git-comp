@@ -1,0 +1,18 @@
+{
+  "name": "github-stats-generator",
+  "version": "1.0.0",
+  "description": "Custom GitHub stats graph generator",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "canvas": "^2.11.2",
+    "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
