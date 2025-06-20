@@ -44,149 +44,371 @@ async function fetchGitHubData(username) {
   }
 }
 
-// Function to create modern TSX-style graph
+// Function to generate sample commit data
+function generateCommitData() {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return months.map(month => ({
+    month,
+    commits: Math.floor(Math.random() * 30) + 10
+  }));
+}
+
+// Function to create modern GitHub stats image
 async function createCustomGraph(userData, theme = 'dark') {
-  const width = 1200;
-  const height = 800;
+  const totalCommits = userData.publicRepos * 15;
+  const avgCommits = Math.round(totalCommits / 12);
+  const maxCommits = Math.round(avgCommits * 2.5);
+  const commitData = generateCommitData();
 
   try {
     return new ImageResponse(
-      {
-        type: 'div',
-        props: {
-          style: {
+      (
+        <div
+          style={{
             display: 'flex',
             flexDirection: 'column',
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)',
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
             padding: '40px',
-          },
-          children: [
-            // Title Section
-            {
-              type: 'div',
-              props: {
-                style: {
+            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+          }}
+        >
+          {/* Title Section */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: '40px',
+            }}
+          >
+            <h1
+              style={{
+                fontSize: '48px',
+                fontWeight: 'bold',
+                background: 'linear-gradient(90deg, #ffffff 0%, #cbd5e1 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+                margin: '0',
+                textAlign: 'center',
+              }}
+            >
+              GitHub Activity
+            </h1>
+            <p
+              style={{
+                color: '#94a3b8',
+                fontSize: '18px',
+                margin: '10px 0 0 0',
+                textAlign: 'center',
+              }}
+            >
+              @{userData.username} - A visual journey through code contributions
+            </p>
+          </div>
+
+          {/* Stats Cards Row */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: '20px',
+              marginBottom: '40px',
+            }}
+          >
+            {/* Total Commits Card */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                width: '300px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                alignItems: 'center',
+              }}
+            >
+              <div
+                style={{
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
-                  marginBottom: '40px',
-                },
-                children: [
-                  {
-                    type: 'h1',
-                    props: {
-                      style: {
-                        fontSize: '42px',
-                        background: 'linear-gradient(to right, #ffffff, #cbd5e1)',
-                        WebkitBackgroundClip: 'text',
-                        color: 'transparent',
-                        margin: '0',
-                      },
-                      children: 'GitHub Activity',
-                    },
-                  },
-                  {
-                    type: 'p',
-                    props: {
-                      style: {
-                        color: '#94a3b8',
-                        fontSize: '18px',
-                        margin: '10px 0 0 0',
-                      },
-                      children: 'A visual journey through code contributions',
-                    },
-                  },
-                ],
-              },
-            },
-            // Stats Cards
-            {
-              type: 'div',
-              props: {
-                style: {
+                  marginBottom: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontSize: '24px',
+                    marginRight: '12px',
+                  }}
+                >
+                  📈
+                </div>
+              </div>
+              <div
+                style={{
+                  color: '#ffffff',
+                  fontSize: '36px',
+                  fontWeight: 'bold',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                {totalCommits}
+              </div>
+              <div
+                style={{
+                  color: '#94a3b8',
+                  fontSize: '16px',
+                }}
+              >
+                Total Commits
+              </div>
+            </div>
+
+            {/* Avg per Month Card */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                width: '300px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                alignItems: 'center',
+              }}
+            >
+              <div
+                style={{
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: '40px',
-                },
-                children: [
-                  // Generate stat cards
-                  ...[
-                    { title: 'Total Commits', value: userData.publicRepos * 15, icon: '📈', color: '#10b981' },
-                    { title: 'Avg per Month', value: Math.round((userData.publicRepos * 15) / 12), icon: '📅', color: '#3b82f6' },
-                    { title: 'Peak Month', value: Math.round((userData.publicRepos * 15) / 12 * 2.5), icon: '⚡', color: '#8b5cf6' },
-                  ].map(card => ({
-                    type: 'div',
-                    props: {
-                      style: {
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '12px',
-                        padding: '20px',
-                        width: '250px',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                      },
-                      children: [
-                        {
-                          type: 'div',
-                          props: {
-                            style: {
-                              display: 'flex',
-                              alignItems: 'center',
-                              marginBottom: '15px',
-                            },
-                            children: [
-                              {
-                                type: 'span',
-                                props: {
-                                  style: {
-                                    background: `${card.color}20`,
-                                    borderRadius: '8px',
-                                    padding: '8px',
-                                    marginRight: '12px',
-                                    color: card.color,
-                                    fontSize: '24px',
-                                  },
-                                  children: card.icon,
-                                },
-                              },
-                            ],
-                          },
-                        },
-                        {
-                          type: 'h2',
-                          props: {
-                            style: {
-                              color: '#ffffff',
-                              fontSize: '32px',
-                              margin: '0 0 5px 0',
-                            },
-                            children: card.value.toString(),
-                          },
-                        },
-                        {
-                          type: 'p',
-                          props: {
-                            style: {
-                              color: '#94a3b8',
-                              fontSize: '14px',
-                              margin: '0',
-                            },
-                            children: card.title,
-                          },
-                        },
-                      ],
-                    },
-                  })),
-                ],
-              },
-            },
-          ],
-        },
-      },
+                  alignItems: 'center',
+                  marginBottom: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontSize: '24px',
+                    marginRight: '12px',
+                  }}
+                >
+                  📅
+                </div>
+              </div>
+              <div
+                style={{
+                  color: '#ffffff',
+                  fontSize: '36px',
+                  fontWeight: 'bold',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                {avgCommits}
+              </div>
+              <div
+                style={{
+                  color: '#94a3b8',
+                  fontSize: '16px',
+                }}
+              >
+                Avg per Month
+              </div>
+            </div>
+
+            {/* Peak Month Card */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                width: '300px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                alignItems: 'center',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontSize: '24px',
+                    marginRight: '12px',
+                  }}
+                >
+                  ⚡
+                </div>
+              </div>
+              <div
+                style={{
+                  color: '#ffffff',
+                  fontSize: '36px',
+                  fontWeight: 'bold',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                {maxCommits}
+              </div>
+              <div
+                style={{
+                  color: '#94a3b8',
+                  fontSize: '16px',
+                }}
+              >
+                Peak Month
+              </div>
+            </div>
+          </div>
+
+          {/* Chart Section */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              padding: '30px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              flex: 1,
+            }}
+          >
+            <div
+              style={{
+                marginBottom: '24px',
+              }}
+            >
+              <h2
+                style={{
+                  color: '#ffffff',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                Commit Timeline
+              </h2>
+              <p
+                style={{
+                  color: '#94a3b8',
+                  fontSize: '14px',
+                  margin: '0',
+                }}
+              >
+                Monthly contribution activity over the past year
+              </p>
+            </div>
+
+            {/* Simple Bar Chart */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'end',
+                justifyContent: 'space-between',
+                height: '200px',
+                marginBottom: '20px',
+                gap: '8px',
+              }}
+            >
+              {commitData.map((data, index) => {
+                const maxValue = Math.max(...commitData.map(d => d.commits));
+                const height = (data.commits / maxValue) * 180;
+                
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      flex: 1,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '60px',
+                        height: `${height}px`,
+                        background: 'linear-gradient(180deg, #10b981 0%, rgba(16, 185, 129, 0.6) 100%)',
+                        borderRadius: '4px 4px 0 0',
+                        marginBottom: '8px',
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: '12px',
+                        color: '#94a3b8',
+                      }}
+                    >
+                      {data.month}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Bottom Stats */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                paddingTop: '20px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: '#94a3b8',
+                  fontSize: '14px',
+                }}
+              >
+                <span style={{ marginRight: '8px' }}>🌟</span>
+                {userData.totalStars} stars
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: '#94a3b8',
+                  fontSize: '14px',
+                }}
+              >
+                <span style={{ marginRight: '8px' }}>📂</span>
+                {userData.publicRepos} repositories
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: '#94a3b8',
+                  fontSize: '14px',
+                }}
+              >
+                <span style={{ marginRight: '8px' }}>👥</span>
+                {userData.followers} followers
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       {
-        width,
-        height,
+        width: 1200,
+        height: 800,
       }
     );
   } catch (error) {
@@ -195,39 +417,44 @@ async function createCustomGraph(userData, theme = 'dark') {
   }
 }
 
-// Main endpoint - anyone can use this!
+// Main endpoint
 app.get('/stats/:username', async (req, res) => {
   const username = req.params.username;
-  const theme = req.query.theme || 'dark'; // Default theme
+  const theme = req.query.theme || 'dark';
 
   try {
     const userData = await fetchGitHubData(username);
-    const response = await createCustomGraph(userData, theme);
+    const imageResponse = await createCustomGraph(userData, theme);
     
-    // Set appropriate headers
-    response.headers.forEach((value, key) => {
-      res.setHeader(key, value);
-    });
+    // Convert to buffer and send
+    const buffer = await imageResponse.arrayBuffer();
     
-    res.send(response.body);
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.send(Buffer.from(buffer));
+    
   } catch (error) {
-    res.status(404).send('Error: ' + error.message);
+    console.error('Error:', error);
+    res.status(404).json({ error: error.message });
   }
 });
 
 // Health check endpoint
 app.get('/', (req, res) => {
   res.json({
-    message: 'GitHub Stats Generator API',
-    usage: 'https://your-domain.vercel.app/stats/username?theme=dark',
-    themes: ['dark', 'light', 'neon']
+    message: 'GitHub Stats Generator API - Vercel Compatible',
+    usage: 'GET /stats/:username?theme=dark',
+    example: 'https://your-domain.vercel.app/stats/octocat',
+    themes: ['dark', 'light', 'neon'],
+    status: 'active'
   });
 });
 
 app.get('/favicon.ico', (req, res) => res.status(204).send(''));
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 GitHub Stats API ready!`);
 });
 
 module.exports = app;
